@@ -1,0 +1,355 @@
+/* @import url(extra.css); */
+* {
+  margin: 0;
+  padding: 0;
+}
+
+.logo {
+  float: left;
+  padding: 4px 10px;
+}
+.logo a {
+  font-family: "Pacifico", cursive;
+  text-decoration: none;
+  color: white;
+  font-size: 2rem;
+  font-weight: 500;
+}
+
+nav#header {
+  width: 100%;
+  height: 70px;
+  background-color: #f18053;
+  border-bottom: 1px solid whitesmoke;
+  position: sticky;
+  top: 0px;
+  /* bottom: auto; */
+  z-index: 99;
+  margin: 0 0 auto;
+}
+
+ul.account-opt {
+  float: right;
+  list-style: none;
+  margin: 15px 20px auto 20px;
+}
+
+ul.account-opt li.hidden {
+  display: none;
+}
+
+ul.account-opt li.active {
+  display: inline-block;
+  padding: 5px 10pt 8px;
+  height: 25px;
+  border: 1px solid white;
+  border-radius: 25px;
+  background-color: #f18053;
+}
+
+ul.account-opt li a {
+  text-decoration: none;
+  color: white;
+  width: fit-content;
+  height: fit-content;
+  font-family: "Ubuntu", sans-serif;
+  font-size: 1.4em;
+}
+
+ul.account-opt li.active:hover {
+  background-color: #faf8f8;
+  color: #f18053;
+}
+
+ul.account-opt li.active a:hover {
+  color: inherit;
+}
+
+#banner {
+  background-image: url(../img/cover2.jpeg);
+  height: 100vh;
+  background-size: cover;
+  background-position: center;
+}
+
+/*PEN STYLES*/
+div.container {
+  box-sizing: border-box;
+}
+
+.card-wrapper-left {
+  margin: 0 20px;
+  padding-left: 15px;
+  width: 45%;
+  float: left;
+
+  /* background: #f1f1f1; */
+  /* margin: 2rem; */
+}
+
+.card-wrapper-right {
+  margin: 0 20px;
+  padding-right: 15px;
+  width: 45%;
+  float: right;
+  /* background: #f1f1f1; */
+  /* margin: 2rem; */
+}
+
+.blog-card {
+  display: flex;
+  flex-direction: column;
+  margin: 1rem auto;
+  box-shadow: 0 3px 7px -1px rgba(241, 128, 83, 0.5);
+  margin-bottom: 1.6%;
+  background: #fff;
+  line-height: 1.4;
+  font-family: sans-serif;
+  border-radius: 5px;
+  overflow: hidden;
+  z-index: 0;
+}
+.blog-card a {
+  color: inherit;
+}
+.blog-card a:hover {
+  color: #5ad67d;
+}
+.blog-card:hover .photo {
+  transform: scale(1.3) rotate(3deg);
+}
+.blog-card .meta {
+  position: relative;
+  z-index: 0;
+  height: 200px;
+}
+.blog-card .photo {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-size: cover;
+  background-position: center;
+  transition: transform 0.2s;
+}
+.blog-card .details,
+.blog-card .details ul {
+  margin: auto;
+  padding: 0;
+  list-style: none;
+}
+.blog-card .details {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -120%;
+  margin: auto;
+  transition: left 0.2s;
+  background: rgba(241, 128, 83, 0.9);
+  color: #fff;
+  padding: 10px;
+  width: 100%;
+  font-size: 0.9rem;
+}
+.blog-card .details a {
+  text-decoration: dotted underline;
+}
+.blog-card .details ul li {
+  display: inline-block;
+}
+.blog-card .details .author:before {
+  font-family: FontAwesome;
+  margin-right: 10px;
+  content: "\f007";
+}
+.blog-card .details .date:before {
+  font-family: FontAwesome;
+  margin-right: 10px;
+  content: "\f133";
+}
+.blog-card .details .tags ul:before {
+  font-family: FontAwesome;
+  content: "\f02b";
+  margin-right: 10px;
+}
+.blog-card .details .tags li {
+  margin-right: 2px;
+}
+.blog-card .details .tags li:first-child {
+  margin-left: -4px;
+}
+.blog-card .description {
+  padding: 1rem;
+  background: #fff;
+  position: relative;
+  z-index: 1;
+}
+.blog-card .description h1,
+.blog-card .description h2 {
+  font-family: Poppins, sans-serif;
+}
+.blog-card .description h1 {
+  line-height: 1;
+  margin: 0;
+  font-size: 1.7rem;
+  color: #000;
+}
+.blog-card .description h2 {
+  font-size: 1rem;
+  font-weight: 300;
+  text-transform: uppercase;
+  color: #a2a2a2;
+  margin-top: 5px;
+}
+.blog-card .description .read-more {
+  text-align: right;
+}
+.blog-card .description .read-more a {
+  color: rgba(241, 128, 83, 1);
+  display: inline-block;
+  position: relative;
+}
+.blog-card .description .read-more a:after {
+  content: "\f061";
+  font-family: FontAwesome;
+  margin-left: -10px;
+  opacity: 0;
+  vertical-align: middle;
+  transition: margin 0.3s, opacity 0.3s;
+}
+.blog-card .description .read-more a:hover:after {
+  margin-left: 5px;
+  opacity: 1;
+}
+.blog-card p {
+  position: relative;
+  margin: 1rem 0 0;
+  color: #a2a2a2;
+}
+.blog-card p:first-of-type {
+  margin-top: 1.25rem;
+}
+.blog-card p:first-of-type:before {
+  content: "";
+  position: absolute;
+  height: 5px;
+  background: rgba(241, 128, 83, 1);
+  width: 35px;
+  top: -0.75rem;
+  border-radius: 3px;
+}
+.blog-card:hover .details {
+  left: 0%;
+}
+@media (min-width: 640px) {
+  .blog-card {
+    flex-direction: row;
+    max-width: 700px;
+  }
+  .blog-card .meta {
+    flex-basis: 40%;
+    height: auto;
+  }
+  .blog-card .description {
+    flex-basis: 60%;
+  }
+  .blog-card .description:before {
+    transform: skewX(-3deg);
+    content: "";
+    background: #fff;
+    width: 30px;
+    position: absolute;
+    left: -10px;
+    top: 0;
+    bottom: 0;
+    z-index: -1;
+  }
+  .blog-card.alt {
+    flex-direction: row-reverse;
+  }
+  .blog-card.alt .description:before {
+    left: inherit;
+    right: -10px;
+    transform: skew(3deg);
+  }
+  .blog-card.alt .details {
+    padding-left: 25px;
+  }
+}
+.container {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+}
+.content {
+  display: flex;
+  flex-direction: column;
+  width: 75%;
+  height: 100vh;
+  float: left;
+  background-color: rgb(168, 156, 156);
+  padding: 10px;
+  margin-right: 5px;
+  overflow-y: scroll;
+  scroll-behavior: auto;
+}
+
+.content-option {
+  display: flex;
+  flex-direction: column;
+  width: 25%;
+  height: 100vh;
+  float: right;
+  background-color: rgb(230, 215, 215);
+  padding: 10px;
+  margin-left: 5px;
+}
+
+#pet-title {
+  background-color: antiquewhite;
+  margin-bottom: 5px;
+  padding: 10px;
+  font-family: "Ubuntu", sans-serif;
+  font-size: 4em;
+  font-weight: 500;
+}
+
+#pet-details {
+  display: grid;
+  grid-template-columns: auto 250px;
+  background-color: rgb(190, 176, 158);
+  margin-bottom: 5px;
+  padding: 5px 5px 5px 10px;
+}
+
+#pet-details #meta-details {
+  display: flex;
+  flex-direction: column;
+}
+
+#pet-details p {
+  background-color: rgb(218, 184, 139);
+  margin-bottom: 5px;
+  font-size: 1em;
+}
+
+#pet-disc {
+  background-color: rgb(207, 128, 24);
+  height: auto;
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
+  /* font-weight: 900; */
+  font-size: 1.3em;
+}
+
+#pet-disc p {
+  margin: 5px 5px 15px 0em;
+}
+
+#pet-disc:first-letter {
+  font-size: 3em;
+}
+
+#pet-sign-btn {
+}

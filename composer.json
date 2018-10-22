@@ -1,0 +1,6 @@
+{
+    "require": {
+        "facebook/graph-sdk": "^5.6",
+        "intervention/image": "^2.4"
+    }
+}
