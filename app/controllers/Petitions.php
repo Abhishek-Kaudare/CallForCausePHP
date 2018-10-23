@@ -49,7 +49,7 @@ class Petitions extends Controller
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // PROCESS FORM
             // Sanitize POST
-            // $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
 
             $data = [
                 'title' => trim($_POST['title']),
@@ -70,7 +70,7 @@ class Petitions extends Controller
                 'images_err' => '',
                 'youtube_url_err' => '',
             ];
-
+            
             // Validate title
             if (empty($data['title'])) {
                 $data['title_err'] = 'Please enter a Title';

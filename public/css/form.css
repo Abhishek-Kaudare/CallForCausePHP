@@ -473,7 +473,8 @@ textarea.form-element-field:not(:placeholder-shown) ~ .form-element-label {
 }
 
 textarea.form-element-field {
-  height: 3rem;
+  height: 5rem;
+  white-space: pre-wrap;
 }
 
 select.form-element-field {
