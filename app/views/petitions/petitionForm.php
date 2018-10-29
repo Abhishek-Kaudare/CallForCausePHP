@@ -8,7 +8,7 @@
   <title><?php echo SITENAME; ?></title>
   <link href="https://fonts.googleapis.com/css?family=Pacifico" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Krub:400,700|Playball|Ubuntu:400,700" rel="stylesheet">
-  <link rel="stylesheet" href="<?php echo URLROOT; ?>/public/css/main1.css" type="text/css">
+  <link rel="stylesheet" href="<?php echo URLROOT; ?>/public/css/main.css" type="text/css">
   <link rel="stylesheet" href="<?php echo URLROOT; ?>/public/css/form.css" type="text/css">
   <link rel="icon" href="favicon.ico" type="image/gif" sizes="16x16">
 </head>
@@ -111,7 +111,7 @@
     <!-- Form Submit and Reset Button -->
 
     <div class="form-actions">
-      <button class="form-btn" type="submit">Send inquiry</button>
+      <button class="form-btn" type="submit">Submit</button>
       <button class="form-btn-cancel -nooutline" type="reset">Cancel</button>
     </div>
 

@@ -28,13 +28,12 @@ class User
     public function register($data)
     {
         // Prepare Query
-        $this->db->query('INSERT INTO users (name, email, password, uname) VALUES (:name, :email, :password, :uname)');
+        $this->db->query('INSERT INTO users (name, email, password) VALUES (:name, :email, :password)');
 
         // Bind Values
         $this->db->bind(':name', $data['name']);
         $this->db->bind(':email', $data['email']);
         $this->db->bind(':password', $data['psw']);
-        $this->db->bind(':uname', $data['uname']);
 
         //Execute
         if ($this->db->execute()) {
@@ -72,5 +71,56 @@ class User
         $row = $this->db->single();
 
         return $row;
+    }
+
+    // Add User / Register
+    public function checkUser($data)
+    {
+        // check for oauth id
+        $this->db->query("SELECT * FROM users WHERE oauth_provider = :oauth_provider and oauth_uid = :oauth_uid");
+        $this->db->bind(':oauth_provider', $data['oauth_provider']);
+        $this->db->bind(':oauth_uid', $data['oauth_uid']);
+
+        $row = $this->db->single();
+        $count = $this->db->rowCount();
+        echo '<pre>';
+        print_r($count);
+        die();
+        //Check Rows
+        if ( $count > 0) {
+            return $row;
+        } else {
+            $result = $this->insertUser($data);
+            if ($result) {
+                echo '<pre>';
+                print_r($result);
+                die();
+                echo $this->db->getUserById($result);
+            } else {
+                return false;
+            }
+
+        }
+    }
+
+    public function insertUser($data)
+    {
+        // Prepare Query to insert data
+        $this->db->query('INSERT INTO users (oauth_provider, oauth_uid, name, email, picture)
+        VALUES (:oauth_provider, :oauth_uid, :name, :email, :picture)');
+
+        // Bind Values
+        $this->db->bind(':oauth_provider', $data['oauth_provider']);
+        $this->db->bind(':oauth_uid', $data['oauth_uid']);
+        $this->db->bind(':name', $data['name']);
+        $this->db->bind(':email', $data['email']);
+        $this->db->bind(':picture', $data['picture']);
+
+        // Execute
+        if ($this->db->execute()) {
+            return $this->db->lastInsertId();
+        } else {
+            return false;
+        }
     }
 }

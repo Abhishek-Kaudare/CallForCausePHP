@@ -44,10 +44,10 @@
       <div id="pet-disc">
         <?php echo $data['petition']->description ?>
       </div>
-      <div class="resp-container">
+      <!-- <div class="resp-container">
         <iframe class="resp-iframe" width="560" height="315" src="https://www.youtube.com/embed/<?php echo $data['petition']->youtube_url ?>" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen>
-      </iframe>
-      </div>
+      </iframe> -->
+      <!-- </div> -->
     </div>
     <div class="content-option">
       asd

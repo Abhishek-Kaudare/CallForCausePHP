@@ -42,9 +42,9 @@ class Petitions extends Controller
     public function new_petition()
     {
         // Check if logged in
-        // if (!($this->isLoggedIn())) {
-        //     redirect('pages/index');
-        // }
+        if (!($this->isLoggedIn())) {
+            redirect('pages/index');
+        }
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // PROCESS FORM
@@ -148,10 +148,10 @@ class Petitions extends Controller
                 $exec = $this->petitionModel->new_petition($data);
                 if ($exec) {
                     // Redirect to petition display
-                    echo '<pre>';
-                    print_r($exec);
-                    die();
-                    redirect('pages/index');
+                    // echo '<pre>';
+                    // print_r($exec);
+                    // die();
+                    redirect('petitions/show/'.$exec);
                 } else {
                     die('Something went wrong');
                 }

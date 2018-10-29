@@ -19,39 +19,29 @@ class Event
         return $row;
     }
 
-    public function new_petition($data)
+    public function new_event($data)
     {
 
         // Prepare Query
-        $this->db->query('INSERT INTO petitions
+        $this->db->query('INSERT INTO events_cfc
                           ( usr_id ,
-                          title ,
-                          target_authority ,
-                          target_date ,
-                          target_votes ,
-                          description ,
-                          category_id ,
-                          youtube_url )
+                          event_title ,
+                          venue ,
+                          date ,
+                          details )
                           VALUES ( :usr_id ,
-                            :title ,
-                            :target_authority ,
-                            :target_date ,
-                            :target_votes ,
-                            :description ,
-                            :category_id ,
-                            :youtube_url
+                            :event_title ,
+                            :venue ,
+                            :date ,
+                            :details 
                           )');
 
         // Bind Values
         $this->db->bind(':usr_id', $data['usr_id']);
-        $this->db->bind(':title', $data['title']);
-        $this->db->bind(':target_authority', $data['target_authority']);
-        $this->db->bind(':target_date', $data['target_date']);
-        $this->db->bind(':target_votes', $data['target_votes']);
-        $this->db->bind(':description', $data['description']);
-        $this->db->bind(':category_id', $data['category_id']);
-        // $this->db->bind(':images', $data['images']);
-        $this->db->bind(':youtube_url', $data['youtube_url']);
+        $this->db->bind(':event_title', $data['event_title']);
+        $this->db->bind(':venue', $data['venue']);
+        $this->db->bind(':date', $data['date']);
+        $this->db->bind(':details', $data['details']);
         //Execute
         // echo '<pre>';
         // print_r($this->db);
@@ -59,6 +49,31 @@ class Event
 
         if ($this->db->execute()) {
             return $this->db->lastInsertId();
+        } else {
+            return false;
+        }
+    }
+    public function eventEdit($data)
+    {
+
+        // Prepare Query
+        $this->db->query('UPDATE `events_cfc` SET `event_id`=:id,`event_title`=:event_title,`venue`=:venue,`date`=:date,`details`=:details WHERE `event_id`=:id');
+
+        // Bind Values
+        $this->db->bind(':id', $data['id']);
+
+        $this->db->bind(':event_title', $data['event_title']);
+        $this->db->bind(':venue', $data['venue']);
+        $this->db->bind(':date', $data['date']);
+        $this->db->bind(':details', $data['details']);
+        //Execute
+        // echo '<pre>';
+        // print_r($this->db);
+        // die();
+
+        if ($this->db->execute()) {
+            
+            return true;
         } else {
             return false;
         }

@@ -7,6 +7,7 @@ class Events extends Controller
     {
         $this->eventModel = $this->model('Event');
         $this->userModel = $this->model('User');
+        $this->attendesModel = $this->model('Attendees');
     }
 
     public function index()
@@ -19,17 +20,16 @@ class Events extends Controller
     {
         $event = $this->eventModel->getEventById($id);
         $user = $this->userModel->getUserById($event->usr_id);
+        $venue = str_replace(" ", "+", $event->venue);
 
         $data = [
             'event' => $event,
             'user' => $user,
+            'venue' => $venue,
         ];
         if (empty($data['event'])) {
             redirect('pages/index');
         } else {
-          echo '<pre>';
-          print_r($data);
-          die();
             // Load View
             $this->view('events/eventView', $data);
 
@@ -39,9 +39,9 @@ class Events extends Controller
     public function new_event()
     {
         // Check if logged in
-        // if (!($this->isLoggedIn())) {
-        //     redirect('pages/index');
-        // }
+        if (!($this->isLoggedIn())) {
+            redirect('pages/index');
+        }
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // PROCESS FORM
@@ -80,9 +80,8 @@ class Events extends Controller
                 $data['details_err'] = 'Please enter Targeted Votes';
             }
 
-
             // Make sure errors are empty
-            if (empty($data['event_title_err']) && empty($data['venue_err']) && empty($data['date_err']) && empty($data['details_err']) ) {
+            if (empty($data['event_title_err']) && empty($data['venue_err']) && empty($data['date_err']) && empty($data['details_err'])) {
                 // SUCCESS - Proceed to insert
                 $data['usr_id'] = $_SESSION['user_id'];
                 // echo '<pre>';
@@ -90,13 +89,11 @@ class Events extends Controller
                 // die();
 
                 //Execute
-                $exec = $this->petitionModel->new_petition($data);
+                $exec = $this->eventModel->new_event($data);
                 if ($exec) {
                     // Redirect to petition display
-                    echo '<pre>';
-                    print_r($exec);
-                    die();
-                    redirect('pages/index');
+
+                    redirect('events/show/' . $exec);
                 } else {
                     die('Something went wrong');
                 }
@@ -104,106 +101,162 @@ class Events extends Controller
             } else {
 
                 // Load View
-                $this->view('petitions/petitionForm', $data);
+                $this->view('events/eventForm', $data);
             }
 
         } else {
             $data = [
-                'title' => '',
-                'target_authority' => '',
-                'target_date' => '',
-                'target_votes' => '',
-                'description' => '',
-                'category_id' => '',
-                'images' => '',
-                'youtube_url' => '',
+                'event_title' => '',
+                'venue' => '',
+                'date' => '',
+                'details' => '',
                 'usr_id' => '',
-                'title_err' => '',
-                'target_authority_err' => '',
-                'target_date_err' => '',
-                'target_votes_err' => '',
-                'description_err' => '',
-                'category_id_err' => '',
-                'images_err' => '',
-                'youtube_url_err' => '',
-                'dropdown' => '',
+                'venue_err' => '',
+                'date_err' => '',
+                'details_err' => '',
+                'event_title_err' => '',
             ];
 
-            $categories = $this->categoryModel->getCategories();
-
-            $categories_dropdown = "<option value='' selected disabled>Select</option>";
-            foreach ($categories as $cat) {
-                $categories_dropdown .= "<option value='" . $cat->category_id . "'>" . $cat->title . "</option>";
-            }
-            // echo '<pre>';
-            // print_r($categories_dropdown);
-            // die();
-            $data['dropdown'] = $categories_dropdown;
-
-            $this->view('petitions/petitionForm', $data);
+            $this->view('events/eventForm', $data);
         }
 
     }
 
-    public function uploadImage($image)
+    public function edit($id)
     {
+        // Check if logged in
+        if (!($this->isLoggedIn())) {
+            redirect('pages/index');
+        }
 
-        if (isset($image) && $image["error"] == 0) {
-            $allowed = array("jpg" => "image/jpg", "jpeg" => "image/jpeg", "gif" => "image/gif", "png" => "image/png");
-            $filename = $image["name"];
-            $filetype = $image["type"];
-            $filesize = $image["size"];
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            // PROCESS FORM
+            // Sanitize POST
+            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
 
-            // Verify file extension
-            $ext = pathinfo($filename, PATHINFO_EXTENSION);
-            if (!array_key_exists($ext, $allowed)) {
-                return false;
+            $data = [
+                'id' => $id,
+                'event_title' => trim($_POST['event_title']),
+                'venue' => trim($_POST['venue']),
+                'date' => trim($_POST['date']),
+                'details' => trim($_POST['details']),
+                'usr_id' => '',
+                'venue_err' => '',
+                'date_err' => '',
+                'details_err' => '',
+                'event_title_err' => '',
+            ];
+
+            // Validate title
+            if (empty($data['event_title'])) {
+                $data['event_title_err'] = 'Please enter a Title';
             }
-            $filename = substr(sha1(mt_rand()), 9, 19) . '.' . $ext;
 
-            // Verify file size - 5MB maximum
-            $maxsize = 5 * 1024 * 1024;
-            if ($filesize > $maxsize) {
-                return false;
+            // Validate target_authority
+            if (empty($data['venue'])) {
+                $data['venue_err'] = 'Please enter an Venue';
             }
 
-            // Verify MYME type of the file
-            if (in_array($filetype, $allowed)) {
+            // Validate target_date
+            if (empty($data['date'])) {
+                $data['date_err'] = 'Please enter a Targeted Date';
+            }
 
-                move_uploaded_file($image["tmp_name"], "app/storage/images/" . $filename);
-                return $filename;
+            // Validate target_votes
+            if (empty($data['details'])) {
+                $data['details_err'] = 'Please enter Targeted Votes';
+            }
+
+            // Make sure errors are empty
+            if (empty($data['event_title_err']) && empty($data['venue_err']) && empty($data['date_err']) && empty($data['details_err'])) {
+                // SUCCESS - Proceed to insert
+                $data['usr_id'] = $_SESSION['user_id'];
+                // echo '<pre>';
+                // print_r($data);
+                // die();
+                // if($data['usr_id']) ==
+                //Execute
+                $exec = $this->eventModel->eventEdit($data);
+                if ($exec) {
+                    // Redirect to petition display
+
+                    redirect('pages/show/' . $id);
+                } else {
+                    die('Something went wrong');
+                }
 
             } else {
-                return false;
+
+                // Load View
+                $this->view('events/eventEdit', $data);
             }
+
         } else {
-            return false;
+            $event = $this->eventModel->getEventById($id);
+            if ($event->usr_id = $_SESSION['user_id']) {
+                $data = [
+                    'id' => $event->event_id,
+                    'event_title' => $event->event_title,
+                    'venue' => $event->venue,
+                    'date' => $event->date,
+                    'details' => $event->details,
+                    'usr_id' => $event->usr_id,
+                    'venue_err' => '',
+                    'date_err' => '',
+                    'details_err' => '',
+                    'event_title_err' => '',
+                ];
+            }
+
+            $this->view('events/eventEdit', $data);
         }
 
     }
 
-    public function get_youtube_video_id($video_id)
+    public function register()
     {
-
-        // Did we get a URL?
-        if (false !== filter_var($video_id, FILTER_VALIDATE_URL)) {
-
-            // http://www.youtube.com/v/abcxyz123
-            if (false !== strpos($video_id, '/v/')) {
-                list(, $video_id) = explode('/v/', $video_id);
+        if ($this->is_ajax()) {
+            if (isset($_POST["action"]) && !empty($_POST["action"])) { //Checks if action value exists
+                $action = $_POST["action"];
+                switch ($action) { //Switch case for value of action
+                    case "register":$this->test_function();
+                        break;
+                }
             }
-
-            // http://www.youtube.com/watch?v=abcxyz123
-            else {
-                $video_query = parse_url($video_id, PHP_URL_QUERY);
-                parse_str($video_query, $video_params);
-                $video_id = $video_params['v'];
-            }
-
         }
 
-        return $video_id;
+    }
 
+    //Function to check if the request is an AJAX request
+    public function is_ajax()
+    {
+        return isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
+    }
+
+    public function test_function()
+    {
+        $return = $_POST;
+        $data = [
+            'event_id' => $return['id'],
+            'usr_id' => $$_SESSION['user_id'],
+        ];
+        $exec = $this->attendesModel->attendee($data);
+        if ($exec) {
+            $event = $this->eventModel->getEventById($data['event_id']);
+            $event->total_registered = $event->total_registered + 1;
+            $data = [
+                'id' => $event->event_id,
+                'event_title' => $event->event_title,
+                'venue' => $event->venue,
+                'date' => $event->date,
+                'details' => $event->details,
+                'usr_id' => $event->usr_id,
+                'total_registered' => $event->total_registered];
+            $this->eventModel->eventEdit($data);
+        }
+
+        // $return["json"] = json_encode($return);
+        // echo json_encode($return);
     }
 
     public function isLoggedIn()

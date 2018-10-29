@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -25,7 +26,7 @@
         <i class="fa fa-facebook fa-lg"></i>
         Login in with facebook
       </a>
-      <a href="#">
+      <?php echo $data['google'] ?>
         <i class="fa fa-google-plus fa-lg"></i>
         log in with Google
       </a>
@@ -40,11 +41,6 @@
         <label for="email">Full Name: <sup>*</sup></label>
         <input type="text" name="name" placeholder="Full Name" class="<?php echo (!empty($data['name_err'])) ? 'is-invalid' : ''; ?>" value="<?php echo $data['name']; ?>" asd/>
         <span class="invalid-feedback"><?php echo $data['name_err'] ?></span>
-      </div>
-      <div class="u-form-group">
-        <label for="email">Username: <sup>*</sup></label>
-        <input type="text" name="uname" placeholder="Username" class="<?php echo (!empty($data['uname_err'])) ? 'is-invalid' : ''; ?>" value="<?php echo $data['uname']; ?>" asd/>
-        <span class="invalid-feedback"><?php echo $data['uname_err'] ?></span>
       </div>
       <div class="u-form-group">
         <label for="email">Password: <sup>*</sup></label>

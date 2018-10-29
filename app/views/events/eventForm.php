@@ -8,7 +8,7 @@
   <title><?php echo SITENAME; ?></title>
   <link href="https://fonts.googleapis.com/css?family=Pacifico" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Krub:400,700|Playball|Ubuntu:400,700" rel="stylesheet">
-  <link rel="stylesheet" href="<?php echo URLROOT; ?>/public/css/main1.css" type="text/css">
+  <link rel="stylesheet" href="<?php echo URLROOT; ?>/public/css/main.css" type="text/css">
   <link rel="stylesheet" href="<?php echo URLROOT; ?>/public/css/form.css" type="text/css">
   <link rel="icon" href="favicon.ico" type="image/gif" sizes="16x16">
 </head>
@@ -54,7 +54,7 @@
       <!-- Venue -->
 
       <div class="form-element form-input <?php echo (!empty($data['venue_err'])) ? 'form-has-error' : ''; ?>">
-        <input class="form-element-field" id="video_url" name="venue" placeholder="Please fill Venue details"
+        <input class="form-element-field" id="venue_url" name="venue" placeholder="Please fill Venue details"
           value="<?php echo $data['venue']; ?>" type="text" asd />
         <div class="form-element-bar"></div>
         <label class="form-element-label">Venue</label>
@@ -64,8 +64,8 @@
       </div>
       <!-- display Map -->
 
-      <div class="resp-container">
-        <iframe class="resp-iframe" width="560" height="315"  frameborder="1" style="border:0" src="https://www.google.com/maps/embed/v1/place?q=Gateway+Of+India+Mumbai%2CApollo+Bandar%2CColaba%2CMumbai%2CMaharashtra+400001+&key=AIzaSyCLM6xadDFjiTTGw3w_Wg1HSPjOLx1sUwk" allowfullscreen></iframe>
+      <div class="resp-container" id="mps">
+        <iframe class="resp-iframe" width="560" height="315"  frameborder="1" style="border:0" src="https://www.google.com/maps/embed/v1/place?q=+&key=AIzaSyCLM6xadDFjiTTGw3w_Wg1HSPjOLx1sUwk" allowfullscreen></iframe>
       </iframe>
 
       
@@ -74,13 +74,13 @@
     <!-- Form Submit and Reset Button -->
 
     <div class="form-actions">
-      <button class="form-btn" type="submit">Send inquiry</button>
+      <button class="form-btn" type="submit">Submit</button>
       <button class="form-btn-cancel -nooutline" type="reset">Cancel</button>
     </div>
 
   </form>
 </body>
 						
-<script src="<?php echo URLROOT; ?>/public/js/form.js"></script>
+<script src="<?php echo URLROOT; ?>/public/js/form1.js"></script>
 
 </html>
