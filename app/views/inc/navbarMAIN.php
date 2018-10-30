@@ -17,4 +17,7 @@
       <span></span>
     </label>
 </header>
+<form id="demo-2" action="<?php echo URLROOT; ?>/search/tag/" method="GET">
+	<input type="search" placeholder="Search">
+</form>
   
