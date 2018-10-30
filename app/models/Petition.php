@@ -26,7 +26,8 @@
                           target_date ,  
                           target_votes ,  
                           description ,  
-                          category_id ,  
+                          category_id , 
+                          images , 
                           youtube_url ) 
                           VALUES ( :usr_id ,  
                             :title ,  
@@ -35,6 +36,7 @@
                             :target_votes ,        
                             :description ,  
                             :category_id ,  
+                            :images ,
                             :youtube_url
                           )');
 
@@ -46,7 +48,7 @@
         $this->db->bind(':target_votes', $data['target_votes']);
         $this->db->bind(':description', $data['description']);
         $this->db->bind(':category_id', $data['category_id']);
-        // $this->db->bind(':images', $data['images']);
+        $this->db->bind(':images', $data['images']);
         $this->db->bind(':youtube_url', $data['youtube_url']);
         //Execute
         // echo '<pre>';

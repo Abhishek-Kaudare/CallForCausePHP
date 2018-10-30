@@ -15,7 +15,7 @@
 
 <?php require APPROOT . '/views/inc/navbarMAIN.php';?>
   <!-- For error enter class form-has-error -->
-  <form class="form-card" action="<?php echo URLROOT; ?>/petitions/new_petition" method="POST">
+  <form class="form-card" action="<?php echo URLROOT; ?>/petitions/new_petition" method="POST" enctype="multipart/form-data">
     <fieldset class="form-fieldset">
       <legend class="form-legend">Petition Form</legend>
 
@@ -85,7 +85,7 @@
       <!--Upload Images  -->
 
       <div class="form-element <?php echo (!empty($data['images_err'])) ? 'form-has-error' : ''; ?>">
-        <input class="form-element-field" name="images"  type="file"
+        <input class="form-element-field" name="images[]"  type="file"
           required />
         <label class="form-element-label">Upload Images</label>
         <small class="form-element-hint"><?php echo $data['images_err']; ?></small>
@@ -117,7 +117,7 @@
 
   </form>
 </body>
-						
+
 <script src="<?php echo URLROOT; ?>/public/js/form.js"></script>
 
 </html>

@@ -11,6 +11,8 @@
   <link href="https://fonts.googleapis.com/css?family=Pacifico" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Krub:400,700|Playball|Ubuntu:400,700" rel="stylesheet">
   <link rel="stylesheet" href="<?php echo URLROOT; ?>/public/css/main.css" type="text/css">
+  <link rel="stylesheet" type="text/css" href="<?php echo URLROOT; ?>/public/slick/slick.css" />
+  <link rel="stylesheet" type="text/css" href="<?php echo URLROOT; ?>/public/slick/slick-theme.css" />
   <link rel="icon" href="favicon.ico" type="image/gif" sizes="16x16">
 
 </head>

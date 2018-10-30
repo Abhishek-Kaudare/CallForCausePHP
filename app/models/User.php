@@ -77,25 +77,18 @@ class User
     public function checkUser($data)
     {
         // check for oauth id
-        $this->db->query("SELECT * FROM users WHERE oauth_provider = :oauth_provider and oauth_uid = :oauth_uid");
-        $this->db->bind(':oauth_provider', $data['oauth_provider']);
+        $this->db->query("SELECT * FROM users WHERE oauth_uid = :oauth_uid");
         $this->db->bind(':oauth_uid', $data['oauth_uid']);
 
         $row = $this->db->single();
         $count = $this->db->rowCount();
-        echo '<pre>';
-        print_r($count);
-        die();
+        
         //Check Rows
-        if ( $count > 0) {
+        if ($count > 0) {
             return $row;
         } else {
             $result = $this->insertUser($data);
             if ($result) {
-                echo '<pre>';
-                print_r($result);
-                die();
-                echo $this->db->getUserById($result);
             } else {
                 return false;
             }
@@ -103,6 +96,7 @@ class User
         }
     }
 
+    // Add user to
     public function insertUser($data)
     {
         // Prepare Query to insert data
@@ -118,7 +112,7 @@ class User
 
         // Execute
         if ($this->db->execute()) {
-            return $this->db->lastInsertId();
+             $this->checkUser($data);
         } else {
             return false;
         }

@@ -1,5 +1,6 @@
 <?php
 
+
 class Users extends Controller
 {
     public function __construct()
@@ -41,12 +42,17 @@ class Users extends Controller
             // Sanitize POST
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
 
+            // Google login url
+            $authUrl = $this->gClient->createAuthUrl();
+            $google = '<a href="' . filter_var($authUrl, FILTER_SANITIZE_URL) . '">';
+
             $data = [
                 'email' => trim($_POST['email']),
                 'psw' => trim($_POST['psw']),
                 'email_err' => '',
                 'psw_err' => '',
                 'bh' => '',
+                'google' => $google,
             ];
             // Validate email
             if (empty($data['email'])) {
@@ -82,6 +88,11 @@ class Users extends Controller
             }
 
         } else {
+
+            // Google login url
+            $authUrl = $this->gClient->createAuthUrl();
+            $google = '<a href="' . filter_var($authUrl, FILTER_SANITIZE_URL) . '">';
+
             // INIT DATA
 
             $data = [
@@ -89,6 +100,7 @@ class Users extends Controller
                 'psw' => '',
                 'email_err' => '',
                 'psw_err' => '',
+                'google' => $google,
             ];
 
             // Load View
@@ -242,7 +254,9 @@ class Users extends Controller
     {
         $_SESSION['user_id'] = $user->usr_id;
         $_SESSION['user_email'] = $user->email;
-        $_SESSION['user_name'] = $user->name;
+        $_SESSION['user_email'] = $user->email;
+        $_SESSION['user_oauth_provider'] = $user->oauth_provider;
+        // echo "<pre>";
         // print_r($_SESSION);die();
 
         redirect('pages/index');
@@ -251,9 +265,18 @@ class Users extends Controller
     // Logout & Destroy Session
     public function logout()
     {
+
+        //Reset OAuth access token
+        if ($_SESSION['user_oauth_provider'] == 'google') {
+            $this->gClient->revokeToken();
+        }
+
+        //Unset token and user data from session
+        unset($_SESSION['token']);
         unset($_SESSION['user_id']);
         unset($_SESSION['user_email']);
         unset($_SESSION['user_name']);
+        unset($_SESSION['user_oauth_provider']);
 
         session_destroy();
         redirect('users/login');

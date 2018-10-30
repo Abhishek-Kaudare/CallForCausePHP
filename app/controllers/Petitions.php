@@ -9,7 +9,6 @@ class Petitions extends Controller
         $this->petitionModel = $this->model('Petition');
         $this->userModel = $this->model('User');
 
-
     }
 
     public function index()
@@ -25,16 +24,13 @@ class Petitions extends Controller
         $user = $this->userModel->getUserById($petition->usr_id);
         $video = $this->get_youtube_video_id($petition->youtube_url);
         $petition->youtube_url = $video;
-        
 
         $data = [
-        'petition' => $petition, 
-        'category' => $category,
-        'user' => $user
-      ];
+            'petition' => $petition,
+            'category' => $category,
+            'user' => $user,
+        ];
 
-        
-        
         // Load View
         $this->view('petitions/petitionView', $data);
 
@@ -50,7 +46,10 @@ class Petitions extends Controller
             // PROCESS FORM
             // Sanitize POST
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-
+            // echo '<pre>';
+            // print_r($_POST);
+            // print_r($_FILES);
+            // die();
             $data = [
                 'title' => trim($_POST['title']),
                 'target_authority' => trim($_POST['target_authority']),
@@ -58,7 +57,7 @@ class Petitions extends Controller
                 'target_votes' => trim($_POST['target_votes']),
                 'description' => trim($_POST['description']),
                 'category_id' => trim($_POST['category_id']),
-                'images' => trim($_POST['images']),
+                'images' => '',
                 'youtube_url' => trim($_POST['youtube_url']),
                 'usr_id' => '',
                 'title_err' => '',
@@ -70,7 +69,7 @@ class Petitions extends Controller
                 'images_err' => '',
                 'youtube_url_err' => '',
             ];
-            
+
             // Validate title
             if (empty($data['title'])) {
                 $data['title_err'] = 'Please enter a Title';
@@ -101,20 +100,12 @@ class Petitions extends Controller
                 $data['category_id_err'] = 'Please select a Category';
             }
 
-            // Validate images
-            if (empty($data['images'])) {
-                $data['images_err'] = 'Please upload an Image';
-            }
             // echo '<pre>';
-            // print_r($_FILES('images'));
+            // print_r($_FILES['images']);
             // die();
-            // $this->uploadImage($_POST['images']);
 
-            // Validate youtube_url
-            if (empty($data['youtube_url'])) {
-                $data['youtube_url_err'] = 'Please upload an Youtube Url';
-            }
-
+            $result=$this->uploadImage();
+            $data['images'] = $result['images'];
             $categories = $this->categoryModel->getCategories();
 
             if (empty($data['category_id_err'])) {
@@ -151,7 +142,7 @@ class Petitions extends Controller
                     // echo '<pre>';
                     // print_r($exec);
                     // die();
-                    redirect('petitions/show/'.$exec);
+                    redirect('petitions/show/' . $exec);
                 } else {
                     die('Something went wrong');
                 }
@@ -200,67 +191,71 @@ class Petitions extends Controller
 
     }
 
-    public function uploadImage($image)
+    public function uploadImage()
+    {
+        // File upload configuration
+        $targetDir = "C:/xampp/htdocs/CallForCause/app/storage/images/";
+        $allowTypes = array('jpg', 'png', 'jpeg', 'gif');
+        $data=[
+            'images_err'=>'',
+            'images'=>''
+        ];
+
+        $statusMsg = $errorMsg = $insertValuesSQL = $errorUpload = $errorUploadType = '';
+        if (!empty(array_filter($_FILES['images']['name']))) {
+            foreach ($_FILES['images']['name'] as $key => $val) {
+                // File upload path
+                $fileName = basename($_FILES['images']['name'][$key]);
+                
+                $targetFilePath = $targetDir . $fileName;
+
+                // Check whether file type is valid
+                $fileType = pathinfo($targetFilePath, PATHINFO_EXTENSION);
+                $newFileName = substr(sha1(mt_rand()),9,19).'.'.$fileType;
+                $targetFilePath = $targetDir . $newFileName;
+                $data['images'] = $newFileName;
+                if (in_array($fileType, $allowTypes)) {
+                    // Upload file to server
+                    if (move_uploaded_file($_FILES['images']["tmp_name"][$key], $targetFilePath)) {
+                        // Image db insert sql
+                        $insertValuesSQL .= "('" . $fileName . "', NOW()),";
+                    } else {
+                        $statusMsg .= $_FILES['images']['name'][$key] . ', ';
+                    }
+                } else {
+                    $statusMsg .= $_FILES['images']['name'][$key] . ', ';
+                }
+            }
+
+            
+        } 
+        $data['images_err']=$statusMsg;
+        return $data;
+    }
+
+    public function get_youtube_video_id($video_id)
     {
 
-        if (isset($image) && $image["error"] == 0) {
-            $allowed = array("jpg" => "image/jpg", "jpeg" => "image/jpeg", "gif" => "image/gif", "png" => "image/png");
-            $filename = $image["name"];
-            $filetype = $image["type"];
-            $filesize = $image["size"];
+        // Did we get a URL?
+        if (false !== filter_var($video_id, FILTER_VALIDATE_URL)) {
 
-            // Verify file extension
-            $ext = pathinfo($filename, PATHINFO_EXTENSION);
-            if (!array_key_exists($ext, $allowed)) {
-                return false;
-            }
-            $filename = substr(sha1(mt_rand()), 9, 19) . '.' . $ext;
-
-            // Verify file size - 5MB maximum
-            $maxsize = 5 * 1024 * 1024;
-            if ($filesize > $maxsize) {
-                return false;
+            // http://www.youtube.com/v/abcxyz123
+            if (false !== strpos($video_id, '/v/')) {
+                list(, $video_id) = explode('/v/', $video_id);
             }
 
-            // Verify MYME type of the file
-            if (in_array($filetype, $allowed)) {
-
-                move_uploaded_file($image["tmp_name"], "app/storage/images/" . $filename);
-                return $filename;
-
-            } else {
-                return false;
+            // http://www.youtube.com/watch?v=abcxyz123
+            else {
+                $video_query = parse_url($video_id, PHP_URL_QUERY);
+                parse_str($video_query, $video_params);
+                $video_id = $video_params['v'];
             }
-        } else {
-            return false;
+
         }
+
+        return $video_id;
 
     }
-
-    function get_youtube_video_id($video_id)
-{
-
-    // Did we get a URL?
-    if (false !== filter_var($video_id, FILTER_VALIDATE_URL)) {
-
-        // http://www.youtube.com/v/abcxyz123
-        if (false !== strpos($video_id, '/v/')) {
-            list(, $video_id) = explode('/v/', $video_id);
-        }
-
-        // http://www.youtube.com/watch?v=abcxyz123
-        else {
-            $video_query = parse_url($video_id, PHP_URL_QUERY);
-            parse_str($video_query, $video_params);
-            $video_id = $video_params['v'];
-        }
-
-    }
-
-    return $video_id;
-
-}
-
 
     public function isLoggedIn()
     {

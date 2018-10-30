@@ -16,8 +16,8 @@
 
 <body>
   <?php
-  flash('register_success');
-  ?>
+flash('register_success');
+?>
   <div class="login-box <?php echo ($data['bh'] == true) ? 'is-invalid-login' : ''; ?>">
     <div class="lb-header">
       <a href="#" class="active" id="login-box-link">Login</a>
@@ -28,7 +28,7 @@
         <i class="fa fa-facebook fa-lg"></i>
         Login in with facebook
       </a>
-      <a href="#">
+      <?php echo $data['google'] ?>
         <i class="fa fa-google-plus fa-lg"></i>
         log in with Google
       </a>
