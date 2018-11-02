@@ -1,41 +1,56 @@
 <?php
-  class Petition {
+class Petition
+{
     private $db;
 
-    public function __construct(){
-      $this->db = new Database;
+    public function __construct()
+    {
+        $this->db = new Database;
     }
 
-    public function getPetitionById($id){
-      $this->db->query("SELECT * FROM petitions WHERE petition_id = :id");
+    public function getPetitionById($id)
+    {
+        $this->db->query("SELECT * FROM petitions WHERE petition_id = :id");
 
-      $this->db->bind(':id', $id);
-      
-      $row = $this->db->single();
+        $this->db->bind(':id', $id);
 
-      return $row;
+        $row = $this->db->single();
+
+        return $row;
     }
 
-    public function new_petition($data){
+    public function getPetitionByCategoryId($id)
+    {
+        $this->db->query("SELECT * FROM petitions WHERE category_id = :id ORDER BY petition_id DESC");
 
-      // Prepare Query
-        $this->db->query('INSERT INTO petitions 
-                          ( usr_id ,  
-                          title ,  
-                          target_authority ,  
-                          target_date ,  
-                          target_votes ,  
-                          description ,  
-                          category_id , 
-                          images , 
-                          youtube_url ) 
-                          VALUES ( :usr_id ,  
-                            :title ,  
-                            :target_authority ,  
-                            :target_date ,  
-                            :target_votes ,        
-                            :description ,  
-                            :category_id ,  
+        $this->db->bind(':id', $id);
+
+        $row = $this->db->single();
+
+        return $row;
+    }
+
+    public function new_petition($data)
+    {
+
+        // Prepare Query
+        $this->db->query('INSERT INTO petitions
+                          ( usr_id ,
+                          title ,
+                          target_authority ,
+                          target_date ,
+                          target_votes ,
+                          description ,
+                          category_id ,
+                          images ,
+                          youtube_url )
+                          VALUES ( :usr_id ,
+                            :title ,
+                            :target_authority ,
+                            :target_date ,
+                            :target_votes ,
+                            :description ,
+                            :category_id ,
                             :images ,
                             :youtube_url
                           )');
@@ -61,4 +76,14 @@
             return false;
         }
     }
-  }
+
+    public function victory()
+    {
+        $this->db->query("SELECT * FROM petitions WHERE target_votes = total_votes and total_votes > 0 ORDER BY petition_id DESC LIMIT 5");
+
+        $result = $this->db->resultset();
+
+        return $result;
+
+    }
+}

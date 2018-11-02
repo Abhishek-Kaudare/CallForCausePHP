@@ -78,4 +78,13 @@ class Event
             return false;
         }
     }
+
+    public function topEvents(){
+        $this->db->query("SELECT * FROM events_cfc ORDER BY event_id DESC LIMIT 5");
+
+        $result = $this->db->resultset();
+
+        return $result;
+
+    }
 }

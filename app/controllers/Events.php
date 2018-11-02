@@ -40,7 +40,8 @@ class Events extends Controller
     {
         // Check if logged in
         if (!($this->isLoggedIn())) {
-            redirect('pages/index');
+            flash('register_success', 'Login to make a event');
+            redirect('users/login');
         }
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -213,52 +214,7 @@ class Events extends Controller
 
     }
 
-    public function register()
-    {
-        if ($this->is_ajax()) {
-            if (isset($_POST["action"]) && !empty($_POST["action"])) { //Checks if action value exists
-                $action = $_POST["action"];
-                switch ($action) { //Switch case for value of action
-                    case "register":$this->test_function();
-                        break;
-                }
-            }
-        }
-
-    }
-
-    //Function to check if the request is an AJAX request
-    public function is_ajax()
-    {
-        return isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
-    }
-
-    public function test_function()
-    {
-        $return = $_POST;
-        $data = [
-            'event_id' => $return['id'],
-            'usr_id' => $$_SESSION['user_id'],
-        ];
-        $exec = $this->attendesModel->attendee($data);
-        if ($exec) {
-            $event = $this->eventModel->getEventById($data['event_id']);
-            $event->total_registered = $event->total_registered + 1;
-            $data = [
-                'id' => $event->event_id,
-                'event_title' => $event->event_title,
-                'venue' => $event->venue,
-                'date' => $event->date,
-                'details' => $event->details,
-                'usr_id' => $event->usr_id,
-                'total_registered' => $event->total_registered];
-            $this->eventModel->eventEdit($data);
-        }
-
-        // $return["json"] = json_encode($return);
-        // echo json_encode($return);
-    }
-
+   
     public function isLoggedIn()
     {
         if (isset($_SESSION['user_id'])) {

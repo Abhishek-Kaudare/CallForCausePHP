@@ -10,10 +10,11 @@ class Petitions extends Controller
         $this->userModel = $this->model('User');
 
     }
-
     public function index()
     {
-        $data = [];
+        $url = "http://localhost/php_rest_one-master/api/post/initial_petitions.php";
+        $data = json_decode(file_get_contents($url), true);
+
         $this->view('petitions/petitionList');
     }
 
@@ -39,7 +40,9 @@ class Petitions extends Controller
     {
         // Check if logged in
         if (!($this->isLoggedIn())) {
-            redirect('pages/index');
+            flash('register_success', 'Login to make a petition');
+            redirect('users/login');
+
         }
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -104,7 +107,7 @@ class Petitions extends Controller
             // print_r($_FILES['images']);
             // die();
 
-            $result=$this->uploadImage();
+            $result = $this->uploadImage();
             $data['images'] = $result['images'];
             $categories = $this->categoryModel->getCategories();
 
@@ -194,11 +197,11 @@ class Petitions extends Controller
     public function uploadImage()
     {
         // File upload configuration
-        $targetDir = "C:/xampp/htdocs/CallForCause/app/storage/images/";
+        $targetDir = "C:/xampp/htdocs/CallForCause/public/storage/images/";
         $allowTypes = array('jpg', 'png', 'jpeg', 'gif');
-        $data=[
-            'images_err'=>'',
-            'images'=>''
+        $data = [
+            'images_err' => '',
+            'images' => '',
         ];
 
         $statusMsg = $errorMsg = $insertValuesSQL = $errorUpload = $errorUploadType = '';
@@ -206,12 +209,12 @@ class Petitions extends Controller
             foreach ($_FILES['images']['name'] as $key => $val) {
                 // File upload path
                 $fileName = basename($_FILES['images']['name'][$key]);
-                
+
                 $targetFilePath = $targetDir . $fileName;
 
                 // Check whether file type is valid
                 $fileType = pathinfo($targetFilePath, PATHINFO_EXTENSION);
-                $newFileName = substr(sha1(mt_rand()),9,19).'.'.$fileType;
+                $newFileName = substr(sha1(mt_rand()), 9, 19) . '.' . $fileType;
                 $targetFilePath = $targetDir . $newFileName;
                 $data['images'] = $newFileName;
                 if (in_array($fileType, $allowTypes)) {
@@ -227,9 +230,8 @@ class Petitions extends Controller
                 }
             }
 
-            
-        } 
-        $data['images_err']=$statusMsg;
+        }
+        $data['images_err'] = $statusMsg;
         return $data;
     }
 
