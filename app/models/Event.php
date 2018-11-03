@@ -19,6 +19,19 @@ class Event
         return $row;
     }
 
+    public function delete($id){
+        $this->db->query("DELETE FROM `events_cfc` WHERE event_id = :id");
+
+        $this->db->bind(':id', $id);
+
+        if ($this->db->execute()) {
+            return true;
+        } else {
+            return false;
+        }
+    
+    }
+
     public function new_event($data)
     {
 
@@ -70,6 +83,26 @@ class Event
         // echo '<pre>';
         // print_r($this->db);
         // die();
+
+        if ($this->db->execute()) {
+            
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function register($data)
+    {
+
+        // Prepare Query
+        $this->db->query('UPDATE `events_cfc` SET `total_registered`=:total_registered WHERE `event_id`=:id');
+
+        // Bind Values
+        $this->db->bind(':id', $data['id']);
+        $this->db->bind(':total_registered', $data['total_registered']);
+        //Execute
+        
 
         if ($this->db->execute()) {
             

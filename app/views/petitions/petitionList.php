@@ -16,11 +16,12 @@
 <?php require APPROOT . '/views/inc/navbarMAIN.php';?>
    <div class="container">
     <div class="card-wrap-left" style="overflow-y:hidden;">
-      a
+      <h1>255,486,572 people taking action</h1>
+      <h2>On CallForCause, people connect across geographic and cultural borders to support causes they care about.</h2>
     </div>
     <div class="card-wrap-right" >
-      <h1>Petitions Trending in Education</h1>
-      <div class="blog-card">
+      <h1>Petitions</h1>
+      <!-- <div class="blog-card">
         <div class="meta">
           <div class="photo" style="background-image: url(https://storage.googleapis.com/chydlx/codepen/blog-cards/image-1.jpg)"></div>
           <ul class="details">
@@ -45,8 +46,8 @@
             <a href="#">Read More</a>
           </p>
         </div>
-      </div>
-      
+      </div> -->
+      <?php echo $data ?>
     </div>
   </div>
 

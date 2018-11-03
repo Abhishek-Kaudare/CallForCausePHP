@@ -96,7 +96,7 @@ class Pages extends Controller
             $category_name = $category->title;
             $heading = "<h1>Latest Petition in ".$category_name."</h1>";
             // card start
-            $petitions_start = "<div><div class='blog-card-slider'><div class='meta'>";
+            $petitions_start = "<div><div class='blog-card'><div class='meta'>";
             // image
             $image = "<div class='photo' style='background-image: url(https://storage.googleapis.com/chydlx/codepen/blog-cards/image-1.jpg)'></div>";
             // author details

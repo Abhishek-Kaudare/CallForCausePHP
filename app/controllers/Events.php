@@ -12,21 +12,125 @@ class Events extends Controller
 
     public function index()
     {
-        $data = [];
-        $this->view('petitions/eventList');
+        $url = "http://localhost/php_rest_one-master/api/post/initial_events.php";
+        $pet_data = json_decode(file_get_contents($url), true);
+        // echo '<pre>';
+        // print_r($pet_data);
+        // die();
+        $events = "";
+
+        for ($x = 1; $x < $pet_data['number']; $x++) {
+            $event = $pet_data['data'];
+            // card start
+            $event_start = "<div class='blog-card'><div class='meta'>";
+            // image
+            $image = "<div class='photo' style='background-image: url(https://storage.googleapis.com/chydlx/codepen/blog-cards/image-1.jpg)'></div>";
+            // author details
+            $user = $this->userModel->getUserById($event[$x]['usr_id']);
+            // date
+            $date = $event[$x]['event_time'];
+            // detail list start + end
+            $details = "<ul class='details'><li class='author'><a href='#'>" . $user->name . "</a></li><li class='date'>" . $date . "</li></ul></div>";
+            // title
+            $title = "<div class='description'><h1>" . $event[$x]['title'] . "</h1>";
+            // venue
+            $venue = "<h2><strong>Venue: </strong> " . $event[$x]['venue'] . "</h2>";
+            // description
+            $description = substr($event[$x]['details'], 0, 175);
+            $desc = "<p>" . $description . "...</p>";
+            // Read more
+            $link = "<p class='read-more'><a href='" . URLROOT . "/events/show/" . $event[$x]['id'] . "'>Read More</a></p>";
+            // end
+            $end = "</div></div>";
+            $events .= $event_start . $image . $details . $title . $venue . $desc . $link . $end;
+        };
+        $this->view('events/eventList', $events);
     }
+
+    public function account(){
+        if (!($this->isLoggedIn())) {
+            flash('register_success', 'Login to check account');
+            redirect('users/login');
+        }
+        $url = "http://localhost/php_rest_one-master/api/post/initial_events.php";
+        $pet_data = json_decode(file_get_contents($url), true);
+        // echo '<pre>';
+        // print_r($pet_data);
+        // die();
+        $events = "";
+        
+
+        for ($x = 1; $x < $pet_data['number']; $x++) {
+            $event = $pet_data['data'];
+            if($event[$x]['usr_id']==$_SESSION['user_id']){// card start
+            $event_start = "<div class='blog-card'><div class='meta'>";
+            // image
+            $image = "<div class='photo' style='background-image: url(https://storage.googleapis.com/chydlx/codepen/blog-cards/image-1.jpg)'></div>";
+            // author details
+            $user = $this->userModel->getUserById($event[$x]['usr_id']);
+            // date
+            $date = $event[$x]['event_time'];
+            // detail list start + end
+            $details = "<ul class='details'><li class='author'><a href='#'>" . $user->name . "</a></li><li class='date'>" . $date . "</li></ul></div>";
+            // title
+            $title = "<div class='description'><h1>" . $event[$x]['title'] . "</h1>";
+            // venue
+            $venue = "<h2><strong>Venue: </strong> " . $event[$x]['venue'] . "</h2>";
+            // description
+            $description = substr($event[$x]['details'], 0, 175);
+            $desc = "<p>" . $description . "...</p>";
+            // Read more
+            $link = "<p class='read-more'><a href='" . URLROOT . "/events/show/" . $event[$x]['id'] . "'>Read More</a></p>";
+            // Edit
+            $link2 = "<p class='read-more'><a style='color:blue;' href='" . URLROOT . "/events/edit/" . $event[$x]['id'] . "'>Edit</a></p>";
+            // Edit
+            $link3 = "<p class='read-more'><a style='color:red;' href='" . URLROOT . "/events/delete/" . $event[$x]['id'] . "'>Delete</a></p>";
+            // end
+            $end = "</div></div>";
+            $events .= $event_start . $image . $details . $title . $venue . $desc . $link . $link2 . $link3 . $end;}
+        };
+        if(strlen($events) == 0){
+            $events= "<h1>Create a new event-No event created</h1>";
+        }
+        $this->view('pages/account', $events);
+
+    }
+
+    public function delete($id){
+        $this->eventModel->delete($id);
+        $this->account();
+    }   
 
     public function show($id)
     {
         $event = $this->eventModel->getEventById($id);
         $user = $this->userModel->getUserById($event->usr_id);
         $venue = str_replace(" ", "+", $event->venue);
+        
+        if($this->isLoggedIn()){
+            $datas=[
+            'id' => $id,
+            'usr_id' => $_SESSION['user_id']
+        ];
+        if( $this->attendesModel->getAttendeeById($datas)){
+            $res = true;
+        }else{
+            $res = false;
+        }
+        }else{
+            $res = false;
 
+        }
+        
         $data = [
             'event' => $event,
             'user' => $user,
             'venue' => $venue,
+            'res' => $res
         ];
+        echo '<pre>';
+        print_r($data);
+        die();
         if (empty($data['event'])) {
             redirect('pages/index');
         } else {
@@ -214,7 +318,53 @@ class Events extends Controller
 
     }
 
-   
+    public function attend()
+    {
+        if (is_ajax()) {
+            if (isset($_POST["action"]) && !empty($_POST["action"])) { //Checks if action value exists
+                $action = $_POST["action"];
+                switch ($action) { //Switch case for value of action
+                    case "register":$this->register();
+                        break;
+                }
+            }
+        }
+
+    }
+    //Function to check if the request is an AJAX request
+    public function is_ajax()
+    {
+        return isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
+    }
+
+    public function register($id)
+    {
+       // Check if logged in
+        if (!($this->isLoggedIn())) {
+            flash('register_success', 'Login to register');
+            redirect('users/login');
+        }
+        
+        $event = $this->eventModel->getEventById($id);
+
+        $data=[
+            'id' => $id,
+            'total_registered' => $event->total_registered + 1,
+            'usr_id' => $_SESSION['user_id']
+        ];
+        if( !$this->attendesModel->getAttendeeById($data)){
+            $x=$this->eventModel->register($data);
+            $y=$this->attendesModel->attend($data);
+            $this->show($id);
+        }
+        $this->show($id);
+
+        
+        
+
+        
+    }
+
     public function isLoggedIn()
     {
         if (isset($_SESSION['user_id'])) {

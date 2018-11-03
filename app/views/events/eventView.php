@@ -26,15 +26,23 @@
           </p>
           <p>
             <i class="fa fa-calendar-check-o" aria-hidden="true"></i> <?php echo $data['event']->date ?>
+
           </p>
           <p>
             <i class="fa fa-map-marker" aria-hidden="true"></i> <?php echo $data['event']->venue ?>
           </p>
+
         </div>
         <div id="btn-tags">
-          <button class="pet-sign-btn">
-              Register!
+          <form action="<?php echo URLROOT; ?>/events/register/<?php echo $data['event']->event_id ?>" method="post">
+          <button class="pet-sign-btn" type="submit" <?php if($data['res']): ?>disabled <?php endif ?>>
+            <?php if($data['res']):?>
+            Registered
+            <?php else: ?>
+            Register!
+            <?php endif ?>
           </button>
+          </form>
         </div>
       </div>
       <div id="pet-disc">
@@ -46,7 +54,8 @@
       </div>
     </div>
     <div class="content-option">
-      asd
+      <h2>Help us make this world a better place to live!</h2>
+      <h3>Your each presense matters!</h3>
     </div>
   </div>
   <footer>
@@ -54,6 +63,10 @@
 
   </footer>
 </body>
-
+<script
+  src="https://code.jquery.com/jquery-3.3.1.js"
+  integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+  crossorigin="anonymous"></script>
 <script src="<?php echo URLROOT; ?>/public/js/view.js"></script>
+
 </html>

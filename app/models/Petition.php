@@ -76,10 +76,47 @@ class Petition
             return false;
         }
     }
+    public function register($data)
+    {
 
+        // Prepare Query
+        $this->db->query('UPDATE `petitions` SET `total_votes`=:total_votes WHERE `petition_id`=:id');
+
+        // Bind Values
+        $this->db->bind(':id', $data['id']);
+        $this->db->bind(':total_votes', $data['total_votes']);
+        //Execute
+        
+
+        if ($this->db->execute()) {
+            
+            return true;
+        } else {
+            return false;
+        }
+    }
+    public function decline($data)
+    {
+
+        // Prepare Query
+        $this->db->query('UPDATE `petitions` SET `down_votes`=:down_votes WHERE `petition_id`=:id');
+
+        // Bind Values
+        $this->db->bind(':id', $data['id']);
+        $this->db->bind(':down_votes', $data['down_votes']);
+        //Execute
+        
+
+        if ($this->db->execute()) {
+            
+            return true;
+        } else {
+            return false;
+        }
+    }
     public function victory()
     {
-        $this->db->query("SELECT * FROM petitions WHERE target_votes = total_votes and total_votes > 0 ORDER BY petition_id DESC LIMIT 5");
+        $this->db->query("SELECT * FROM petitions WHERE target_votes <= total_votes and total_votes > 0 ORDER BY petition_id DESC LIMIT 5");
 
         $result = $this->db->resultset();
 

@@ -254,7 +254,7 @@ class Users extends Controller
     {
         $_SESSION['user_id'] = $user->usr_id;
         $_SESSION['user_email'] = $user->email;
-        $_SESSION['user_email'] = $user->email;
+        $_SESSION['user_name'] = $user->name;
         $_SESSION['user_oauth_provider'] = $user->oauth_provider;
         // echo "<pre>";
         // print_r($_SESSION);die();

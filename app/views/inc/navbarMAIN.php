@@ -3,10 +3,10 @@
     <input type="checkbox" id="nav-toggle" class="nav-toggle">
     <nav>
       <ul>
-        <li><a href="#">Events</a></li>
-        <li><a href="#">Petitions</a></li>
+        <li><a href="<?php echo URLROOT; ?>/events/">Events</a></li>
+        <li><a href="<?php echo URLROOT; ?>/petitions/">Petitions</a></li>
         <?php if (isset($_SESSION['user_id'])): ?>
-          <li><a href="#">Account</a></li>
+          <li><a href="<?php echo URLROOT; ?>/events/account">Account</a></li>
         <?php endif?>
         <?php if (isset($_SESSION['user_id'])): ?>
           <li ><a id="logout" href="<?php echo URLROOT; ?>/users/logout">Logout </a></li>
@@ -19,7 +19,3 @@
       <span></span>
     </label>
 </header>
-<form id="demo-2" action="<?php echo URLROOT; ?>/search/tag/" method="GET">
-	<input type="search" placeholder="Search">
-</form>
-  

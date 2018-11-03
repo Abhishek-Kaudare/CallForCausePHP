@@ -8,14 +8,51 @@ class Petitions extends Controller
         $this->categoryModel = $this->model('Category');
         $this->petitionModel = $this->model('Petition');
         $this->userModel = $this->model('User');
+        $this->voterModel = $this->model('Vote');
 
     }
     public function index()
     {
         $url = "http://localhost/php_rest_one-master/api/post/initial_petitions.php";
-        $data = json_decode(file_get_contents($url), true);
+        $pet_data = json_decode(file_get_contents($url), true);
+        
+        $petitions = "";
 
-        $this->view('petitions/petitionList');
+        for ($x = 1; $x < $pet_data['number']; $x++) {
+            $petition = $pet_data['data'][$x];
+            
+            // category heading
+            // card start
+            $petitions_start = "<div><div class='blog-card'><div class='meta'>";
+            // image
+            $image = "<div class='photo' style='background-image: url(https://storage.googleapis.com/chydlx/codepen/blog-cards/image-1.jpg)'></div>";
+            // author details
+            $user = $this->userModel->getUserById($petition['usr_id']);
+            // date
+            $date = $petition['target_date'];
+            // votes
+            $votes = $petition['up_votes'] . " / " . $petition['target_votes'];
+            // detail list start + end
+            $details = "<ul class='details'><li class='author'>" . $user->name . "</li><li class='date'>" . $date . "</li></ul></div>";
+            // title
+            $title = "<div class='description'><h1>" . $petition['title'] . "</h1>";
+            // voters
+            $voters = "<h2><strong>Votes: </strong> " . $votes . "</h2>";
+            // description
+            $description = substr($petition['description'], 0, 175);
+            $desc = "<p>" . $description . "...</p>";
+            // Read more
+            $link = "<p class='read-more'><a href='" . URLROOT . "/petitions/show/" . $petition['id'] . "'>Read More</a></p>";
+            // end
+            $end = "</div></div></div>";
+            $petitions .= $petitions_start . $image . $details . $title . $voters . $desc . $link . $end;
+
+        }
+        // echo '<pre>';
+        // print_r($petitions);
+        // die();
+
+        $this->view('petitions/petitionList',$petitions);
     }
 
     public function show($id)
@@ -25,12 +62,37 @@ class Petitions extends Controller
         $user = $this->userModel->getUserById($petition->usr_id);
         $video = $this->get_youtube_video_id($petition->youtube_url);
         $petition->youtube_url = $video;
+        
+        if($this->isLoggedIn()){
+            $datas=[
+            'id' => $id,
+            'usr_id' => $_SESSION['user_id']
+        ];
+        $votes = $this->voterModel->geVoterById($datas);
+        if($votes){
+            $res = true;
+            $votes = $votes;
+
+        }else{
+            $res = false;
+            $votes = $votes;
+        }
+        }else{
+            $res = false;
+            $votes = $votes;
+
+        }
 
         $data = [
             'petition' => $petition,
             'category' => $category,
             'user' => $user,
+            'res' => $res,
+            'status' => $votes->status
         ];
+        // echo '<pre>';
+        // print_r($data);
+        // die();
 
         // Load View
         $this->view('petitions/petitionView', $data);
@@ -233,6 +295,61 @@ class Petitions extends Controller
         }
         $data['images_err'] = $statusMsg;
         return $data;
+    }
+    public function register($id)
+    {
+       // Check if logged in
+        if (!($this->isLoggedIn())) {
+            flash('register_success', 'Login to register');
+            redirect('users/login');
+        }
+        
+        $event = $this->petitionModel->getPetitionById($id);
+
+        $data=[
+            'id' => $id,
+            'total_votes' => $event->total_votes + 1,
+            'usr_id' => $_SESSION['user_id']
+        ];
+        if( !$this->voterModel->geVoterById($data)){
+            $x=$this->petitionModel->register($data);
+            $y=$this->voterModel->attend($data);
+            $this->show($id);
+        }
+        $this->show($id);
+
+        
+        
+
+        
+    }
+
+    public function decline($id)
+    {
+       // Check if logged in
+        if (!($this->isLoggedIn())) {
+            flash('register_success', 'Login to register');
+            redirect('users/login');
+        }
+        
+        $event = $this->petitionModel->getPetitionById($id);
+
+        $data=[
+            'id' => $id,
+            'down_votes' => $event->down_votes + 1,
+            'usr_id' => $_SESSION['user_id']
+        ];
+        if( !$this->voterModel->geVoterById($data)){
+            $x=$this->petitionModel->decline($data);
+            $y=$this->voterModel->decline($data);
+            $this->show($id);
+        }
+        $this->show($id);
+
+        
+        
+
+        
     }
 
     public function get_youtube_video_id($video_id)

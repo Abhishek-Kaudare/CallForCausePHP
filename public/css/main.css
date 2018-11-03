@@ -1713,6 +1713,7 @@ input[type="search"]:focus {
   height: 100vh;
   padding: 10px;
   background-color: whitesmoke;
+  text-align: center;
 }
 .card-wrap-right {
   margin: 0 20px;

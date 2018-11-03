@@ -31,14 +31,42 @@
           </p>
         </div>
         <div id="btn-tags">
-          <button class="pet-sign-btn" st>
-            Sign Petition!
+          <form action="<?php echo URLROOT; ?>/petitions/register/<?php echo $data['petition']->petition_id ?>" method="post">
+          <button class="pet-sign-btn" type="submit" <?php if($data['res']): ?>disabled <?php endif ?>>
+            <?php if ($data['res']): ?>
+              <?php if ($data['status'] == 1): ?>
+              Signed Petition
+              <?php else: ?>
+              Sign Petition!
+              <?php endif?>
+              <?php
+              else:
+              ?>Sign Petition!
+            <?php endif?>
+            
           </button>
+          </form>
         </div>
         <div id="btn-tags">
-          <button class="pet-sign-btn dec-btn" st>
+          <form action="<?php echo URLROOT; ?>/petitions/decline/<?php echo $data['petition']->petition_id ?>" method="post">
+            <button class="pet-sign-btn dec-btn" type="submit" <?php if($data['res']): ?>disabled <?php endif ?>>
+              <?php if ($data['res']): ?>
+                <?php if ($data['status'] == 0): ?>
+                Declined
+                <?php else: ?>
+                Decline Petition!
+                <?php endif?>
+                <?php
+                else:
+                ?>
+                Decline Petition!
+              <?php endif?>
+              
+            </button>
+          </form>
+          <!-- <button class="pet-sign-btn dec-btn" st>
             Decline Petition!
-          </button>
+          </button> -->
         </div>
       </div>
       <div class="pet-image">
